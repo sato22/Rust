@@ -12,11 +12,11 @@ fn main() {
 
 fn rpn(tl: str) -> isize{
     // 逆ポーランド記法の数式を計算する.返り値は符号付き整数
-    let mut stack = Vec::new();      
     // vec→可変長配列."mut"により可変な変数であることを宣言.
+    let mut stack = Vec::new();     
     
-    let mut token = tl.split_whitespace();
     // tlを空白で分割する. token.next()で一文字進めることができる.
+    let mut token = tl.split_whitespace();
 
     /* 次のトークンが演算子ならばスタックから二つの数値をポップして，
         演算子に応じた計算結果をスタックにプッシュする．
@@ -24,7 +24,7 @@ fn rpn(tl: str) -> isize{
 
     // for文 tlが分割できる限り,分割してできたtokenに対して以下の処理
         if /* numeric */{
-            stack.push()
+            stack.push(token)
         }else /* not numeric */{
             match {
                 "+" => add();
