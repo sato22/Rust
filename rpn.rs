@@ -24,7 +24,7 @@ fn rpn(tl: str) -> isize{
 
     // for文 tlが分割できる限り,分割してできたtokenに対して以下の処理
         if /* numeric */{
-            stack.push(token)
+            stack.push(token);
         }else /* not numeric */{
             match {
                 "+" => add();
