@@ -22,7 +22,7 @@ fn rpn(tl: str) -> isize{
         演算子に応じた計算結果をスタックにプッシュする．
         次のトークンが数値ならば数値をプッシュする．*/
 
-    // for文 tlが分割できる限り,分割してできたtokenに対して以下の処理
+    // 繰り返し tlが分割できる限り,分割してできたtokenに対して以下の処理
         if /* numeric */{
             stack.push(token);
         }else /* not numeric */{
