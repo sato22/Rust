@@ -28,23 +28,24 @@ fn rpn(tl: &str) -> f64{
 
     // tlが空白で分割できる限り,分割してできたtokenに対して以下の処理
     for token in tl.split_whitespace(){
-
         match token{
             // 演算子
-            "+" => add(&mut stack),
-            "-" => substract(&mut stack),
-            "/" => divide(&mut stack),
-            "*" => multiply(&mut stack),
-            // 半角数字の場合,stackにプッシュ
+            "+" => // tokenlistにAdditionを追加,
+            "-" => // tokenlistにSubstractionを追加,
+            "/" => // tokenlistにDivisionを追加,
+            "*" => // tokenlistにMultiplicationを追加,
+            // 半角数字の場合
             _ => match re.captures(token).unwrap().at(0){
                     None => println!(""),   
                     Some(numeric) => {
-                            let num: f64 = numeric.parse().unwrap(); 
-                            stack.push(num);
+                            // tokenlistにNumericを追加
                     },
               }
         }
     }
+
+    // tokenlistに次の要素があればmethod(token)を実行→tokenのクラスによって実行するメソッドが変化する
+
     stack.pop().unwrap()     // 計算結果を取り出す.
 }
 
@@ -60,7 +61,7 @@ impl Calculate for Addition {
     }
 }
 
-impl Calculate for Substract{
+impl Calculate for Substraction {
     fn method (&self,stack: &mut Vec<f64>){
         let x:f64 = stack.pop().unwrap();
         let y:f64 = stack.pop().unwrap();
@@ -68,7 +69,7 @@ impl Calculate for Substract{
     }				
 }
 
-impl Calculate for Multiply{
+impl Calculate for Multiplication {
     fn method (&self,stack: &mut Vec<f64>){
         let x:f64 = stack.pop().unwrap();
         let y:f64 = stack.pop().unwrap();
@@ -76,7 +77,7 @@ impl Calculate for Multiply{
     }
 }
 
-impl do_something for divide(stack: &mut Vec<f64>){
+impl Calculate for division {
     fn method (&self,stack: &mut Vec<f64>){
         let x:f64 = stack.pop().unwrap();
         let y:f64 = stack.pop().unwrap();
