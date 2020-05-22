@@ -13,6 +13,35 @@ fn main() {
     println!("Tokenlist = {}, Answer = {}", tl, ans);
 }
 
+struct Type;
+
+trait Calculate<T> {
+    fn method(_: T);
+}
+
+impl Calculate<(&str,&mut Vec<f64>)> for Type {
+    fn method (args: (&str,&mut Vec<f64>)){
+         // マッチした箇所全体を取り出す
+         let re = Regex::new(r"[0-9]+").unwrap();
+
+        let x:f64 = args.1.pop().unwrap();
+        let y:f64 = args.1.pop().unwrap();
+            match args.0{
+                "+" => args.1.push(x+y),
+                "-" => args.1.push(x-y),
+                "/" => args.1.push(x/y),
+                "*" => args.1.push(x*y),
+                _ => match re.captures(args.0).unwrap().at(0){
+                    None => println!(""),   
+                    Some(numeric) => {
+                        let num: f64 = numeric.parse().unwrap(); 
+                        args.1.push(num);
+                    },
+                }
+            }
+    }
+}
+
 fn rpn(tl: &str) -> f64{
     // 逆ポーランド記法の数式を計算する.返り値は符号付き実数
 
@@ -23,64 +52,10 @@ fn rpn(tl: &str) -> f64{
     // vec→可変長配列.f64型として定義.
     let mut stack: Vec<f64> = Vec::new();
 
-    // マッチした箇所全体を取り出す
-    let re = Regex::new(r"[0-9]+").unwrap();
 
     // tlが空白で分割できる限り,分割してできたtokenに対して以下の処理
     for token in tl.split_whitespace(){
-        match token{
-            // 演算子
-            "+" => // tokenlistにAdditionを追加,
-            "-" => // tokenlistにSubstractionを追加,
-            "/" => // tokenlistにDivisionを追加,
-            "*" => // tokenlistにMultiplicationを追加,
-            // 半角数字の場合
-            _ => match re.captures(token).unwrap().at(0){
-                    None => println!(""),   
-                    Some(numeric) => {
-                            // tokenlistにNumericを追加
-                    },
-              }
-        }
+            Type::method((token,&mut stack));
     }
-
-    // tokenlistに次の要素があればmethod(token)を実行→tokenのクラスによって実行するメソッドが変化する
-
     stack.pop().unwrap()     // 計算結果を取り出す.
-}
-
-trait Calculate {
-    fn method(&self);
-}
-
-impl Calculate for Addition {
-    fn method (&self,stack: &mut Vec<f64>){
-        let x:f64 = stack.pop().unwrap();
-        let y:f64 = stack.pop().unwrap();
-        stack.push(y+x);
-    }
-}
-
-impl Calculate for Substraction {
-    fn method (&self,stack: &mut Vec<f64>){
-        let x:f64 = stack.pop().unwrap();
-        let y:f64 = stack.pop().unwrap();
-        stack.push(y-x);
-    }				
-}
-
-impl Calculate for Multiplication {
-    fn method (&self,stack: &mut Vec<f64>){
-        let x:f64 = stack.pop().unwrap();
-        let y:f64 = stack.pop().unwrap();
-        stack.push(y*x);	
-    }
-}
-
-impl Calculate for division {
-    fn method (&self,stack: &mut Vec<f64>){
-        let x:f64 = stack.pop().unwrap();
-        let y:f64 = stack.pop().unwrap();
-        stack.push(y/x);
-    }
 }
