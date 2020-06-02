@@ -13,32 +13,51 @@ fn main() {
     println!("Tokenlist = {}, Answer = {}", tl, ans);
 }
 
-struct Type;
+struct Addition;
+struct Substraction;
+struct Multiplication;
+struct Division;
 
-trait Calculate<T> {
-    fn method(_: T);
+trait Calculate{
+    fn method(stack: &mut Vec<f64>);
 }
 
-impl Calculate<(&str,&mut Vec<f64>)> for Type {
-    fn method (args: (&str,&mut Vec<f64>)){
-         // マッチした箇所全体を取り出す
-         let re = Regex::new(r"[0-9]+").unwrap();
+enum Operator{
+    Addition,
+    Substraction,
+    Division,
+    Multiplication,
+}
 
-        let x:f64 = args.1.pop().unwrap();
-        let y:f64 = args.1.pop().unwrap();
-            match args.0{
-                "+" => args.1.push(x+y),
-                "-" => args.1.push(x-y),
-                "/" => args.1.push(x/y),
-                "*" => args.1.push(x*y),
-                _ => match re.captures(args.0).unwrap().at(0){
-                    None => println!(""),   
-                    Some(numeric) => {
-                        let num: f64 = numeric.parse().unwrap(); 
-                        args.1.push(num);
-                    },
-                }
-            }
+impl Calculate for Addition{
+    fn method(stack: &mut Vec<f64>){
+        let x:f64 = stack.pop().unwrap();
+        let y:f64 = stack.pop().unwrap();
+        stack.push(y+x);
+    }
+}
+
+impl Calculate for Substraction{
+    fn method(stack: &mut Vec<f64>){
+        let x:f64 = stack.pop().unwrap();
+        let y:f64 = stack.pop().unwrap();
+        stack.push(y-x);
+    }
+}
+
+impl Calculate for Multiplication{
+    fn method(stack: &mut Vec<f64>){
+        let x:f64 = stack.pop().unwrap();
+        let y:f64 = stack.pop().unwrap();
+        stack.push(y*x);
+    }
+}
+
+impl Calculate for Division{
+    fn method(stack: &mut Vec<f64>){
+        let x:f64 = stack.pop().unwrap();
+        let y:f64 = stack.pop().unwrap();
+        stack.push(y/x);
     }
 }
 
@@ -52,10 +71,39 @@ fn rpn(tl: &str) -> f64{
     // vec→可変長配列.f64型として定義.
     let mut stack: Vec<f64> = Vec::new();
 
+    // マッチした箇所全体を取り出す
+    let re = Regex::new(r"[0-9]+").unwrap();
+    
+    let tokenlist = vec![
+        Operator::Addition,
+        Operator::Substraction,
+        Operator::Division,
+        Operator::Multiplication,
+    ];
 
     // tlが空白で分割できる限り,分割してできたtokenに対して以下の処理
     for token in tl.split_whitespace(){
-            Type::method((token,&mut stack));
+
+        match token{
+            // 演算子
+            "+" => tokenlist.push(Operator::Addition),
+            "-" => tokenlist.push(Operator::Substraction),
+            "/" => tokenlist.push(Operator::Division),
+            "*" => tokenlist.push(Operator::Multiplication),
+            // 半角数字の場合,stackにプッシュ
+            _ => match re.captures(token).unwrap().at(0){
+                    None => {},   
+                    Some(numeric) => {
+                            let num: f64 = numeric.parse().unwrap(); 
+                            stack.push(num);
+                    },
+              }
+        }
     }
+
+    while let Some(top) = tokenlist.pop() {
+        top::method(&mut stack);
+    }
+
     stack.pop().unwrap()     // 計算結果を取り出す.
 }
