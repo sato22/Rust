@@ -57,7 +57,7 @@ impl Calculate for Division{
     }
 }
 
-impl Calculate for Numeric{
+impl Numeric{
     fn method(&self,stack: &mut Vec<f64>) -> f64 {
         self.value
     }
