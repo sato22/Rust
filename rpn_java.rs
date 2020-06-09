@@ -18,7 +18,7 @@ struct Substraction;
 struct Multiplication;
 struct Division;
 struct Numeric{
-    value: f64
+    value:f64
 }
 
 trait Calculate{
@@ -57,9 +57,9 @@ impl Calculate for Division{
     }
 }
 
-impl Numeric{
-    fn method(&self,stack: &mut Vec<f64>) -> f64 {
-        self.value
+impl Calculate for Numeric{
+    fn method(&self,stack: &mut Vec<f64>){
+        /*stack.push(self.value);*/
     }
 }
 
@@ -77,11 +77,14 @@ fn rpn(tl: &str) -> f64{
     let re = Regex::new(r"[0-9]+").unwrap();
     
     let mut tokenlist = Vec::new(); 
+    let mut tokenlist2 = Vec::new(); 
+    let mut valuelist = Vec::new();
 
     let addition = Addition;
     let substraction = Substraction;
     let division = Division;
     let multiplication = Multiplication;
+
 
     // tlが空白で分割できる限り,分割してできたtokenに対して以下の処理
     for token in tl.split_whitespace(){
@@ -97,8 +100,12 @@ fn rpn(tl: &str) -> f64{
                     None => {},   
                     Some(numeric) => {
                             let num: f64 = numeric.parse().unwrap();
-                            let numeric = Numeric{value: num}; 
-                            tokenlist.push(&numeric as &Calculate);
+                            let val = Numeric{value: num};
+                            valuelist.push(val);
+                            let len = valuelist.len();
+                            let valu:&Numeric = &valuelist[len-1];
+                            
+                            tokenlist2.push(valu);
                     },
               }
         }
