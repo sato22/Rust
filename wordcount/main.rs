@@ -19,6 +19,7 @@ fn main() {
     println!("入力した文字列{}は{}文字です。", s1, len);
 }
 
+// String型はコピーできないため借用
 fn calculate_length(s: &String) -> usize {
     s.len()
 }
