@@ -6,28 +6,57 @@
 use std::io;
 use std::io::Write;
 
+// 標準入力から一行読み取り、指定の型に変換する関数
+fn read<T: std::str::FromStr>() -> T {
+    let mut s = String::new();
+    std::io::stdin().read_line(&mut s).ok();
+    s.trim().parse().ok().unwrap()              // 改行コードを削って返す
+}
+
 fn main() {
-    let mut i;
-    let mut n;
-    
-    let mut num: [f64; 100];    // num配列100個
-    
-    let mut sum = 0.0;
-    let mut ave;
     
     print!("数値の数を入力(1〜100) = ");
     io::stdout().flush().unwrap();
-    std::io::stdin().read_line(&mut n).unwrap();    // 一行読む．失敗は無視
-    let mut n = n.trim();   // 末尾にある改行コードを削る
+    let n:f64 = read();
+    // n → 36行目で被演算子の型をそろえなければならないのでf64型に
     
+    let mut num:[f64; 100] = [0.0; 100];    // f64型num配列100個
+
+    let mut sum:f64 = 0.0;
+    let mut i:f64 = 0.0;    
+    // i → 29行目で型をそろえなければならないのでf64型に
+    
+
     while i < n {
-        print!("{}個目 = ",i+1);
+        print!("{}個目 = ",i+1.0);
         io::stdout().flush().unwrap();
-        std::io::stdin().read_line(&mut num[i]).unwrap();    // 一行読む．失敗は無視
-        num[i] = num[i].trim();   // 末尾にある改行コードを削る
-        sum += num[i];
+        num[i as usize] = read();   // 配列にアクセスする場合、usizeに変換
+        sum += num[i as usize];
+        i += 1.0;
     }
     
-    ave = sum/n;
+    let ave = sum/n;        // 被演算子の型は揃える必要がある
+    println!("数値の平均値 = {}",ave);
+
+    
+    /*
+        被演算子やwhileの条件式の型は揃える必要があるため、
+        特に指定のない場合は全てf64型で統一するべき？
+    */
+    // average(i,n,num,sum);
+}
+
+/*
+fn average(mut i: f64,n:f64,mut num:[f64; 100],mut sum:f64){
+    while i < n {
+        print!("{}個目 = ",i+1.0);
+        io::stdout().flush().unwrap();
+        num[i as usize] = read();   // 配列にアクセスする場合、usizeに変換
+        sum += num[i as usize];
+        i += 1.0;
+    }
+    
+    let ave = sum/n;        // 被演算子の型は揃える必要がある
     println!("数値の平均値 = {}",ave);
 }
+*/
